@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python
 import SimpleHTTPServer
 class CORSHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def send_head(self):
