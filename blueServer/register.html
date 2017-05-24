@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Register</title>
+    <script type="text/javascript" src="/jquery-1.6.2.js">
+    </script>
+    <script type="text/javascript" src="/jquery-ui.js">
+    </script>
+    <!--link rel="stylesheet" href="/assets/css/jquery-ui-themes-1.8.12/themes/cupertino/jquery.ui.all.css" /-->
+    <link rel="stylesheet" href="/jquery-ui-1.9.2.custom.css" />
+    <link rel="stylesheet" href="/site.css" />
+</head>
+
+<body>
+    <div class="appheader">
+        <div class="bushido-logo">
+        </div>
+    </div>
+    <div class="content content-header">
+        <h1>Register Here</h1>
+        <span id="statusLabel">
+<br>
+</span>
+    </div>
+    <div class="content wrapper">
+        <div id="companyCode" class="formPanel hidden">
+            <h3>Enter your company code</h3>
+            <p>Code:
+                <input id="companyCodeTxt" type="text" maxlength="5" placeholder="company code" />
+            </p>
+            <input id="companyCodeNextBtn" type="button" href="#basicInfo" value="Next">
+        </div>
+        <div id="basicInfo" class="formPanel hidden widget">
+            <h3>Create your basic account info</h3>
+            <ul class="fieldList">
+                <li>
+                    <div class="fieldLabel">Company:</div>
+                    <div class="fieldValue">
+                		<span id="companyName">
+						</span>
+                    	<input class="registration" id="companyId" type="hidden" />
+                    </div>
+                </li>
+                <li>
+                    <div class="fieldLabel">Username: </div>
+                    <div class="fieldValue">
+						<input class="registration" id="username" type="text" />
+                    </div>
+                </li>
+                <li>
+                    <div class="fieldLabel">
+						Email:
+					</div>
+					<div class="fieldValue">
+                    <input class="registration" id="email" type="text" />
+                    </div>
+                </li>
+                <li>
+                <div class="fieldLabel">
+                	Password:
+                </div>
+                <div class="fieldValue">
+                	<input class="registration" id="password1" type="password" />
+                </div>
+                </li>
+                <li>
+                <div class="fieldLabel">
+                Confirm Password:
+                </div>
+                <div class="fieldValue">
+                	<input class="registration" id="password2" type="password" />
+                </div>
+                </li>
+            </ul>
+            <input type="button" id="basicInfoBackBtn" value="back" />
+            <span style="display: inline-block;width:200px;"></span>
+            <input type="button" id="basicInfoNextBtn" value="next" />
+        </div>
+        <div id="profile" class="formPanel hidden">
+        	<h3>Fill in your profile</h3>
+        	<ul class="fieldList">
+        		<li>
+        			<div class="fieldLabel">First name:</div>
+        			<div class="fieldValue">
+        				<input class="registration" id="firstname" type="text" />
+        			</div>
+        		</li>
+        		<li>
+        			<div class="fieldLabel">Last name:</div>
+        			<div class="fieldValue">
+        				<input class="registration" id="lastname" type="text" />
+        			</div>
+        		</li>
+        		<li>
+        			<div class="fieldLabel">About you:</div>
+        			<div class="fieldValue">
+        				<textarea class="registration" id="aboutme"></textarea>
+        			</div>
+        		</li>
+        	</ul>
+        	<input type="button" id="submitBtn" value="submit" />
+        </div>
+        <div>
+            <script type="text/javascript">
+            function setStatus(str) {
+                if (str && str.length > 0)
+                    $('#statusLabel').text(str);
+                else
+                    $('#statusLabel').html('<br>');
+            }
+
+            $(window).bind('hashchange', function(e) {
+                console.log('Changed: ' + window.location.hash);
+                switchPanel();
+            });
+
+            $(document).ready(function() {
+                var API_HOST = 'http://api.dojo2017.local:3000';
+                location.hash = '#companyCode';
+                switchPanel();
+
+                $('#companyCodeTxt').keyup(function(e) {
+                    $('#companyCodeNextBtn').button('disable');
+                    if (e.target.value.length == 5) {
+                        e.target.disabled = 'disabled';
+                        $.ajax({
+                            type: "POST",
+                            url: API_HOST + '/company/validate',
+                            dataType: 'json',
+                            data: JSON.stringify({
+                                code: e.target.value
+                            }),
+                            success: function(data) {
+                                $('#companyId').val(data['companyid']);
+                                $('#companyName').html(data['companyname']);
+                                $('#companyCodeNextBtn').button('enable');
+                            },
+                            error: function() {
+                                alert('An error has occurred validating the company code');
+                            },
+                            complete: function() {
+                                e.target.disabled = '';
+                                e.target.focus();
+                                setStatus('');
+                            }
+                        });
+                        setStatus('Validating...');
+                    }
+                });
+                $('#companyCodeNextBtn').button().button('disable').click(function(e) {
+                    location.hash = '#basicInfo';
+                });
+                $('#basicInfoBackBtn').button().click(function(e) {
+                    location.hash = '#companyCode';
+                });
+                $('#basicInfoNextBtn').button().click(function(e) {
+                	location.hash = '#profile';
+                });
+                $('#submitBtn').button().click(function(e) {
+                	var data = {};
+                	$('.registration').each(
+                		function(index, field){
+                			data[field.id] = field.value;
+                		});
+
+                })
+            })
+
+            function switchPanel() {
+                $('.formPanel').hide();
+                $(location.hash).show();
+            }
+            </script>
+</body>
+
+</html>
