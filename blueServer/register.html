@@ -123,29 +123,8 @@
                 $('#companyCodeTxt').keyup(function(e) {
                     $('#companyCodeNextBtn').button('disable');
                     if (e.target.value.length == 5) {
-                        e.target.disabled = 'disabled';
-                        $.ajax({
-                            type: "POST",
-                            url: API_HOST + '/company/validate',
-                            dataType: 'json',
-                            data: JSON.stringify({
-                                code: e.target.value
-                            }),
-                            success: function(data) {
-                                $('#companyId').val(data['companyid']);
-                                $('#companyName').html(data['companyname']);
+                                $('#companyName').html('Dojo Corp');
                                 $('#companyCodeNextBtn').button('enable');
-                            },
-                            error: function() {
-                                alert('An error has occurred validating the company code');
-                            },
-                            complete: function() {
-                                e.target.disabled = '';
-                                e.target.focus();
-                                setStatus('');
-                            }
-                        });
-                        setStatus('Validating...');
                     }
                 });
                 $('#companyCodeNextBtn').button().button('disable').click(function(e) {
